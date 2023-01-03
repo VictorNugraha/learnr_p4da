@@ -1,0 +1,752 @@
+---
+title: "LearnPy P4DA"
+author : "Team Algoritma"
+date :  "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  learnr::tutorial:
+  fig.show : 'asis'
+runtime: shiny_prerendered
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(scipen = 99)
+Sys.setlocale('LC_ALL','C')
+
+# learnr
+library(learnr)
+library(sortable)
+library(parsons)
+
+# Data Wrangling
+library(tidyverse)
+library(lubridate)
+
+# Visualisasi
+library(ggplot2)
+library(plotly)
+library(glue)
+library(scales)
+
+# Python
+library(reticulate)
+library(googlesheets4)
+```
+
+## Pengetahuan Dasar Python
+
+Hi *future* Data Analyst!! Pada notebook ini kita akan membahas mengenai analisis data menggunakan bahasa pemrograman **Python** menggunakan salah satu module yang cukup *powerfull* yaitu **pandas**. Namun sebelum itu kita akan membahas beberapa hal terlebih dahulu sebelum masuk ke pengenalan kita terhadap **pandas**.
+
+### Virtual Environtment
+
+ Virtual environtment merupakan alat yang digunakan untuk menyimpan dependensi dari suatu library atau module yang diperlukan ketika mengerjakan suatu project tertentu. Beberapa project tertentu membutuhkan dependency python yang berbeda, oleh karena itu cukup menyulitkan jika kita membuat virtual environtment. 
+ 
+ Beberapa hal yang perlu dipersiapkan dalam membuat virtual environtment yaitu:
+
+- Sudah memiliki Anaconda Navigator/Miniconda
+- Menggunakan CLI (command line interface) sebagai alat untuk membuat, memanage, dan mengaktifkan virtual environtment
+
+Ketika kita sudah memiliki Anaconda Navigator, biasanya tersedia CLI bawaan dari Anaconda Navigator yaitu Anaconda Prompt. Kita akan coba membuat suatu virtual environtment menggunakan Anaconda Prompt. Setelah dibuka Anaconda Prompt, biasanya langsung muncul tampilan sebagai berikut.
+
+<center>
+![](www/base.png)
+</center>
+
+<br>
+
+Saat pertama kali kita membuka Anaconda Prompt, kita akan diberikan informasi bahwa kita masih didalam environtment base atau environtment secara general. Untuk bisa membuat virtual environtment, kita bisa menggunakan code berikut.
+
+<center>
+```
+conda create --name mynewenv python=3.7
+```
+</center>
+
+<center>
+![](www/create-new.png)
+</center>
+
+<br>
+
+Tujuan dari kita menuliskan **python=3.7** agar python yang terinstall pada virtual environtment yang kita buat adalah python dengan versi 3.7. Inilah salah satu keuntungan yang kita peroleh dengan membuat virtual environtment, kita dapat mengatur versi python yang kita inginkan sesuai kebutuhan dari project yang ingin kita buat. Selanjutnya akan muncul beberapa dependency library yang minta untuk di install saat membuat virtual environtment baru. Kita bisa mengetikkan huruf **y** untuk melanjutkan proses pembuatan virtual environtment yang baru.
+
+<center>
+![](www/dependency.png)
+</center>
+
+<br>
+
+Setelah virtual environtment yang baru kita buat sudah selesai, kita bisa mengaktifkan environtment yang sudah kita buat dengan code berikut.
+
+<center>
+```
+conda activate mynewenv
+```
+</center>
+
+Kita dapat melihat beberapa module yang sudah terinstall pada virtual environtment yang kita buat dengan menggunakan code berikut.
+
+<center>
+```
+conda list
+```
+</center>
+
+<center>
+![](www/conda-list.png)
+</center>
+
+<br>
+
+### Install Kernel pada Virtual Environtment
+
+Kernel merupakan suatu penghubung antara environtment dengan setiap project yang kita gunakan. Jika dimisalkan sebuah rumah yang memiliki ruangan, kernel merupakan pintu penghubung yang bisa digunakan untuk bisa mengakses ruangan tersebut. Secara default apabila kita tidak melakukan install kernel pada environtment yang kita buat maka kernelnya adalah **Python 3**. Namun apabila kita menggunakan kernel yang sudah kita buat untuk masing-masing environtment yang kita miliki maka nama kernelnya akan menyerupai nama environtment yang sudah kita buat.
+
+Kita dapat melakukan install kernel untuk environtment yang sudah kita buat yaitu **mynewenv** dengan cara sebagai berikut.
+
+- Pastikan sudah memiliki **ipykernel** pada environtment terlebih dahulu, apabila belum bisa lakukan installasi **ipykernel** dengan cara berikut:
+
+<center>
+```
+conda install ipykernel # menggunakan conda
+pip install ipykernel # menggunakan pip
+```
+</center>
+
+Setelah terinstall, maka kita lakukan pengaktifan **ipykernel** pada environtment kita yaitu **mynewenv** :
+
+<center>
+```
+python -m ipykernel install --user --name mynewenv`
+```
+</center>
+
+Setelah sukses melakukan penginstallan akan ada status pada CLI sebagaimana gambar dibawah ini dengan begitu maka install kernel untuk environtment yang kita gunakan sudah selesai.
+
+<center>
+![](www/ipykernel-installed.png)
+</center>
+
+<br>
+
+Kita bisa melanjutkan dengan membuka python kita menggunakan IDE yang kita miliki yaitu bisa melalui Jupyter Notebook, Jupyter Lab, atau IDE yang lain. Jika ingin menggunakan IDE Jupyter Notebook, maka cukup gunakan code **jupyter notebook** dan apabila menggunakan IDE **Jupyter Lab** gunakan code jupyter lab pada CLI.
+
+Sebelum mengenal lebih jauh beberapa keguanaan yang bisa kita dapatkan dari module **pandas**, kita akan coba mengenal beberapa object di python.
+
+
+## Struktur Data pada Python
+
+Dalam python sendiri terdapat sebuah struktur data, dimana struktur data ini biasanya disusun berdasarkan satu dimensi atau dua dimensi. Terdapat beberapa struktur data pada python diantaranya yaitu :
+
+- List
+- Tuple
+- Dictionary
+
+### List
+
+List adalah suatu struktur data pada python yang tersusun secara satu dimensi dimana nilai dari dari anggotanya bisa kita ganti. List secara umum bisa disebut sebagai "array" pada python. List dapat dibuat dengan menggunakan tanda bracket atau `[..,..,..]`. Perhatikan list dibawah ini.
+
+```{python}
+list_angka = [1,2,3,4,5,6,7,8,9]
+print(list_angka)
+```
+
+List bisa kita ganti nilai pada anggotanya dengan melakukan inspek urutan pada struktur list. Misalnya kita ingin mecoba mengganti nilai 6 pada object `list_angka` diatas menjadi 10. Kita harus tahu terlebih dahulu nilai 6 pada `list_angka` terdapat pada urutan ke berapa. Pada python, index suatu data dimulai dari angka 0, sehingga kita bisa melakukan inspek urutan data dengan cara $index = data_i-1$. Selanjutnya untuk melakukan inspek salah satu nilai pada list dapat menggunakan `nama_object[index]`.
+
+```{python}
+list_angka[5]
+```
+
+```{python}
+list_angka[5]=10
+print(list_angka)
+```
+
+### Tuple
+
+Tuple adalah suatu struktur data pada python yang tersusun satu dimensi hanya saja nilai dari anggotanya konstan dan tidak dapat diubah. Untuk dapat membuat suatu tuple bisa menggunakan tanda kurung atau `(..,..,..)` atau tanpa tanda kurung. Perhatikan contoh tuple dibawah ini.
+
+```{python}
+tuple_object = ('Learn', 'Python', 2020) 
+tuple_object
+```
+
+```{python}
+tuple_object2 = 'list', 'tuple', 'dictionary'
+print(tuple_object2)
+```
+
+Tuple biasanya lebih mudah dikenal sebagai object string, dimana hanya berisi sederet informasi yang memiliki satu dimensi. Untuk mengakses index tertentu pada tuple dapat menggunakan `nama_object[]` seperti pada list dan apabila kita ingin mengetahui suatu nilai pada tuple terdapat pada index ke berapa, maka kita bisa gunakan `nama_object.index()`.
+
+```{python}
+tuple_object[2]
+```
+
+```{python}
+tuple_object2.index('tuple')
+```
+
+Selain itu, jika kita memiliki lebih dari 1 nilai pada object tuple yang kita miliki, kita bisa melakukan slicing pada object tuple kita dengan menggunakan `tuple[]` dan memasukkan urutan nilai yang ingin dimasukkan.
+
+**Ingat!!** Pada python untuk urutan angka dimulai dari angka 0.
+
+```{python}
+print(tuple_object[0])
+print(tuple_object2[1:3])
+```
+
+### Dictionary
+
+Dictionary adalah suatu struktur data pada python yang terdiri dari *key* dan *value* dimana *key* bisa kita tentukan sendiri beserta *value* bisa kita ubah nilainya. *Key* pada dictionary memiliki maksud suatu index sedangkan *value* adalah nilai dari index pada struktur data dictionary. Setiap satu *key* pasti memiliki satu *value*. Dalam pembuatan dictionary kita bisa menggunakan tanda kurung kurawal atau `{key:value}`. Perhatikan dictionary dibawah ini.
+
+```{python}
+dict_object = {1:'merah', 2:8, 3:'hijau', 4:10, 5:'hitam', 'apel':9}
+dict_object
+```
+
+Untuk bisa melakukan inspek elemen pada dictionary kita bisa gunakan `nama_object[key]` seperti pada list dan tuple. 
+
+```{python}
+print(dict_object[5])
+print(dict_object['apel'])
+```
+
+Untuk bisa mengubah nilai atau value kita bisa mengakses berdasarkan key yang ingin kita ubah. Misalnya disini kita coba ubah value pada key apel yang tadinya 9 menjadi kata "fuji".
+
+```{python}
+dict_object['apel'] = 'fuji'
+print(dict_object)
+```
+
+### Quiz 1
+
+```{r lat1, echo=FALSE}
+question("Berdasarkan pilihan dibawah ini, manakah struktur data yang bisa kita tentukan index dan nilainya?", type = "single",
+correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
+random_answer_order = FALSE,
+answer("list", correct = TRUE),
+answer("tuple"),
+answer("dictionary"))
+```
+
+```{r lat2, echo=FALSE}
+question("Jika ada struktur data dibawah ini. <br><br><i>object1 = [1,45,23,12,45,2,3,4,67,23]</i><br><br> Termasuk apakah object1?", type = "single",
+correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
+random_answer_order = FALSE,
+answer("list", correct = TRUE),
+answer("tuple"),
+answer("dictionary"))
+```
+
+```{r lat3, echo=FALSE}
+question("Manakah dari pilihan dibawah ini yang tidak menghasilkan error?", type = "single",
+correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
+random_answer_order = FALSE,
+answer("object1 = (1,2,3,4,5,6)<br>
+      object1[3] = 9<br>
+      print(object1)"),
+answer("object1 = {'angka':1, 'bulan':03, 'tahun': 2020, 'lokasi': 'jakarta'}<br>
+      object1 = {'angka':1, 'angka':4, 'angka':10, 'bulan':03, 'tahun': 2020, 'tahun1': 2019, 'tahun': 2021, 'lokasi': 'jakarta'}"),
+answer("object1 = [1,2,3,4,5,6]<br>
+      object1.index(3)", correct = TRUE),
+answer("object1 = [1,2,3,4,5,6]
+      object1.index(0)"))
+```
+
+```{r lat4, echo=FALSE}
+question("Berapakah nilai yang dihasilkan dari code dibawah ini?<br><br>
+         angka = {1:10, 2:20, 3:30, 4:40, 5:50, 6:60, 6:90, 7:70, 8:80, 8:88, 9:90}<br>
+print(angka[1], angka[6], angka[8])", type = "single",
+correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
+random_answer_order = FALSE,
+answer("10, 50, 88"),
+answer("10, 60, 88"),
+answer("10, 90, 88", correct = TRUE),
+answer("10, 90, 80"))
+```
+
+## Module Pandas
+
+Selanjutnya kita akan coba mengeksplorasi module `pandas` untuk keperluan analisis data. Untuk dapat menggunakan module tersebut, kita harus melakukan import module terlebih dahulu. Untuk melakukan import module cukup menggunakan code `import`.
+
+```{python}
+import pandas as pd
+print(pd.__version__)
+```
+
+### Data Frame 
+
+Kita akan coba untuk melakukan exploratory data menggunakan data turnover suatu perusahaan. Untuk melihat datanya kita harus mengimport data turnover tersebut yang tersimpan dengan nama file `turnover_balance.csv`. Data ini menunjukkan suatu record history karyawan pada perusahaan tertentu yang mengalami turnover berdasarkan beberapa atribut-atribut penunjangnya yaitu `satisfaction_level`, `last_evaluation`, `number_project`, `average_monthly_hours`, `time_spend_company`, `Work_accident`, `promotion_last_5years`, `division`, dan `salary`. Berikut data turnover tersebut :
+
+```{python data, echo=FALSE, message=FALSE, warning=FALSE}
+turnover = pd.read_csv("data_input/turnover_balance.csv")
+list(turnover.columns)
+```
+
+Berdasarkan data `turnover` diatas, berikut ini adalah glimpse dari setiap variabelnya :
+
+* `satisfaction_level` : tingkat kepuasan karyawan bekerja di suatu perusahaan
+* `last_evaluation` : tingkat kepuasan karyawan pada evaluasi terakhir
+* `number_project` : banyaknya project yang telah diterima karyawan
+* `average_monthly_hours` : rata-rata jam kerja per bulan
+* `time_spend_company` : lama waktu bekerja dalam perusahaan (tahun)
+* `Work_accident` : ada tidaknya kecelakaan kerja, 0 = tidak ada, 1 = ada
+* `promotion_last_5years` : pernah mendapatkan promoksi dalam 5 tahun terakhir, 0 = tidak, 1 = ya
+* `division` : nama departemen atau divisi
+* `salary` : tingkat pendapatan, dibagi menjadi low, medium dan high
+* `left` : data history karyawan resign, 0 = tidak, 1 = ya
+
+### Tipe Data
+
+Sebagai seorang data analyst, kita harus mengetahui terlebih dahulu tipe-tipe data yang akan kita analisis. Pada python, ketika kita bekerja menggunakan module `pandas` untuk melakukan pengecekan tipe data pada data yang digunakan, kita bisa menggunakan `dtypes`. Nilai yang akan dikeluarkan oleh `dtypes` adalah sebuah series yang berisi tipe data setiap variabel pada suatu data frame.
+
+```{python}
+turnover.dtypes
+```
+
+Tipe-tipe data yang terdapat pada Python umumnya adalah:
+
+* **float** : tipe data yang berisi angka kontinu
+* **int** : tipe data yang berisi angka bulat
+* **object** : tipe data yang berisi alphabetic, seperti nama, alamat, dst
+* **bool** : tipe data yang berisi TRUE atau FALSE
+* **str** : tipe data yang berisi text
+
+### Tipe Data Categorical dan Numerical 
+
+Ada beberapa tipe data yang cukup spesial seperti tipe data **categoric**. Tipe data categoric merupakan tipe data yang mirip dengan tipe data object, perbedaannya yaitu pada memori yang disimpan. Jika pada tipe data object maka untuk setiap karakter yang ada akan tersimpan pada suatu memori dengan id yang berbeda dengan karakter yang lain. Hal ini akan menyebabkan memori menyimpan terlalu banyak informasi terlebih apabila karakter yang ada pada data yang kita miliki terdapat pengulangan. Tentunya akan sangat memakan memori yang banyak. Oleh karena itu ada tipe data spesial yaitu **categoric** yang dapat kita gunakan untuk menyimpan memori data dengan lebih efisien. Cara kerja dari tipe data categoric yaitu akan menyimpan informasi dari suatu karakter yang unik dan akan disimpan dengan id tertentu sesuai dengan berapa banyak karakter unik yang muncul. 
+
+Dalam beberapa kondisi, tipe data pada suatu kolom atau variabel sangatlah penting untuk diperhatikan. Hal ini akan mempermudah seorang data analyst mengetahui data apa yang sedang dia kerjakan. Selain itu juga ketika akan membuat suatu report, variabel tertentu dapat diinterpretasikan dengan baik menggunakan pengukuran statistik ataupun berupa visualisasi. Oleh karena itu, ketika tipe data dalam data frame ada yang tidak sesuai, kita perlu menyesuaikan agar data dapat direpresentasikan dengan baik. 
+
+Pada course material, telah dibahas bagaimana mengubah tipe data pada suatu data frame. Untuk melakukan perubahan tipe data, kita bisa menggunakan fungsi `astype()` pada kolom yang ingin kita ubah.
+
+**Knowledge check:**
+
+Sebelum kita akan mengalisis kolom manakah yang belum sesuai, kita cek terlebih dahulu tipe data dari masing-masing kolom pada object `turnover` yang kita miliki.
+
+```{python lat5, exercise = TRUE, exercise.setup = "data"}
+
+```
+
+**Latihan!**
+
+Jika kita perhatikan berdasarkan gloosary dari masing-masing kolom pada data `turnover` dan tipe datanya, bisakah Anda temukan kolom mana saja yang harus diubah dalam bentuk `category`? 
+
+Jika sudah menemukannya, Anda dapat mengubahnya menggunakan fungsi `astype('category')` dan jangan lupa simpan kembali agar data `turnover` sudah memiliki tipe data yang tepat untuk masing-masing kolomnya.
+
+```{python lat6, exercise = TRUE, exercise.eval = TRUE}
+
+```
+
+Lakukan pengecekan ulang mengenai tipe data yang sudah diubah, apakah sudah terubah dengan baik dengan menggunakan `dtypes` atribut.
+
+```{python lat7, exercise = TRUE, exercise.eval = TRUE}
+
+```
+
+### Quiz 2
+
+Jika diketahui data sebagai berikut.
+
+```{python}
+toko = pd.DataFrame({
+    'jenis' : ['Sepatu', 'Sandal', 'Baju', 'Tas'],
+    'warna' : ['Hitam', 'Merah', 'Biru', 'Pink'],
+    'harga' : [1300000, 56000, 85000, 100000],
+    'diskon' : [0.2, 0, 0, 0.1],
+    'stok' : [59, 100, 200, 50],
+    'penjualan_mingguan' : [6, 50, 150, 40]
+})
+toko
+```
+
+```{r lat8, echo=FALSE}
+question("Jika Fafilia adalah seorang data analyst pada toko tersebuut, dia diminta untuk melakukan analisis terhadap data toko tersebut. Manakah dari kolom yang tersedia termasuk category atau object?)", type = "single",
+correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
+random_answer_order = TRUE,
+answer("jenis dan harga"),
+answer("warna dan stok"),
+answer("jenis dan warna", correct = TRUE),
+answer("warna dan diskon"))
+```
+
+```{r lat9, echo=FALSE}
+question("Manakah kolom yang termasuk integer?)", type = "single",
+correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
+random_answer_order = TRUE,
+answer("diskon"),
+answer("stok"),
+answer("jenis", correct = TRUE),
+answer("warna"))
+```
+
+```{r lat10, echo=FALSE}
+question("Manakah yang termasuk tipe data float pada data toko diatas?)", type = "single",
+correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
+random_answer_order = TRUE,
+answer("diskon"),
+answer("stok"),
+answer("jenis", correct = TRUE),
+answer("penjualan_mingguan"))
+```
+
+### Eksplorasi Data
+
+Selain mengetahui tipe data, terkadang kita juga perlu melakukan eksplorasi lebih lanjut mengenai data yang kita gunakan. Beberapa hal yang bisa kita lakukan dalam melakukan eksplorasi data adalah sebagai berikut :
+
+- `.head()` dan `.tail()` : untuk menampilkan 5 data paling awal dan 5 data paling akhir
+- `.dtypes` : untuk mengecek tipe data
+- `.shape` : untuk mengetahui ukuran data tabel berdasarkan informasi baris dan kolomnya
+- `.size` : untuk mengetahui besarnya data tabel berdasarkan informasi baris dikali kolom
+- `.axes` : untuk mengetahui infomasi index names atau column names
+- `.describe()` : untuk mengetahui summary singkat dari data 
+
+Untuk melakukan inspek kolom yang kita perlukan, kita bisa menggunakan `df['namakolom']` jika hanya satu kolom atau dengan menggunakan `df[['kolom1','kolom2',...]]`. Misalkan kita ingin menampilkan 5 data pertama dari kolom `division`, `salary`, dan `left`.
+
+```{python}
+turnover[['division', 'salary', 'left']].head()
+```
+
+Kita bisa lakukan pengecekan berapa banyak data yang tersedia pada `turnover` data dengan menggunakan `.shape` atau `.size`.
+
+```{python}
+turnover.shape
+```
+
+```{python}
+turnover.size
+```
+
+Untuk bisa melakukan inspek nama kolom kita bisa menggunakan atribut `.axes[1]` sedangkan untuk melakukan inspek nama index bisa menggunakan atribut `.axes[0]`.
+
+```{python}
+turnover.axes[1]
+```
+
+Kita juga bisa menghitung banyaknya kolom yang ada pada suatu dataframe dengan menggunakan method `len()` dengan diikuti `df.axes[]`. Misalnya kita ingin menghitung banyaknya kolom pada dataframe `turnover`.
+
+```{python}
+len(turnover.axes[1])
+```
+
+Terkadang kita juga membutuhkan informasi singkat dari rangkuman dari data yang kita miliki, kita bisa menggunakan `.describe()` untuk mendapatkan informasi dari rangkuman data kita.
+
+```{python}
+turnover.describe()
+```
+
+Informasi yang dikeluarkan oleh `.describe()` adalah 8 pengukuran deskriptif statistik berupa:
+- Count
+- Mean
+- Standard Deviation
+- Minimum Value
+- 25th Percentile (Q1)
+- 50th Percentile (Q2/Median)
+- 75th Percentile (Q3)
+- Maximum Value
+
+Secara default, summary yang dikeluarkan oleh `.describe()` adalah summary dari kolom yang memiliki tipe data numeric. Apabila kita ingin menginputkan tipe data tertentu pada saat melakukan describe maka kita bisa gunakan parameter `include` untuk mendefinisikan tipe data yang akan dideskripsikan. 
+
+Sebagai contoh disini kita akan coba menggunakan describe untuk tipe data object dan numeric.
+
+```{python}
+turnover.describe(include = ['object', 'int64', 'float64'])
+```
+
+Selain menggunakan `.describe()`, kita juga bisa menggunakan fungsi deksriptif statistik lain jika kita hanya ingin menampilkan spesifik nilai. Beberapa fungsi deskriptif statistik lain yang bisa digunakan yaitu:
+- `.mean()` : menampilkan rata-rata
+- `.sum()` : mendapatkan total nilai
+- `.min()` dan `.max()` : mendapatkan nilai terkecil dan terbesar
+- `.median()` : mendapatkan nilai tengah
+- `.quantile()` : mendapatkan nilai quartile dari data, secara default akan memunculkan nilai median
+
+> **!!!** Sedikit tips, kita bisa gunakan method `.info()` untuk menampilkan struktur suatu dataframe baik berupa banyaknya baris dan kolom, tipe data untuk masing-masing kolom, dan besarngya data yang kita gunakan.
+
+```{python}
+turnover.info()
+```
+
+Sebagai data analyst, berdasarkan data yang kita miliki, kita ingin mencoba mencari tahu berapa besar rata-rata jam kerja bulanan dan rata-rata lama bekerja di perusahaan. Untuk mengetahui nilai rata-rata pada suatu series bisa menggunakan `.mean()`.
+
+```{python}
+turnover["average_montly_hours"].mean()
+```
+
+Berdasarkan data yang ada, diketahui bahwa rata-rata pekerja yang ada yaitu sebesar 203 jam per bulan. Atau jika dikonversikan ke dalam hari yaitu rata-rata jam kerjanya sebesar 10 jam per hari.
+
+```{python}
+turnover["time_spend_company"].mean()
+```
+
+Berdasarkan data yang ada, diketahui bahwa rata-rata lama bekerja dalam suatu perusahaan yaitu 3.6 tahun. 
+
+Sebelumnya, kita sudah memiliki data `turnover` dengan tipe data untuk masing-maisng kolom sebagai berikut.
+
+```{python}
+turnover.dtypes
+```
+
+Pada part sebelumnya kita sudah mencoba untuk mengubah kolom `division` dan `salary` tipe data object menjadi `category` dengan menggunakan method `astype()`. Jika kita perhatikan sekali lagi pada data `turnover`, masih terdapat beberapa kolom yang belum tepat tipe datanya berdasarkan informasi pada kolom tersebut. Oleh karena itu, coba ubah beberapa kolom yang seharusnya `category` dari kolom yang ada.
+
+```{python lat11, exercise = TRUE, exercise.eval = TRUE}
+
+```
+
+### Quiz 3
+
+Berdasarkan data `turnover` yang kita miliki, jawablah beberapa pertanyaan berikut ini.
+
+```{r lat12, echo=FALSE}
+question("Method apakah yang bisa kita gunakan untuk mendapatkan informasi tipe data, banyaknya kolom dan baris, serta nama-nama kolom dari dataframe turnover?)", type = "single",
+correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
+random_answer_order = TRUE,
+answer(".describe()"),
+answer(".head()"),
+answer("info()", correct = TRUE),
+answer(".shape"))
+```
+
+```{r lat13, echo=FALSE}
+question("Method apakah yang bisa kita gunakan untuk mendapatkan informasi tipe data, banyaknya kolom dan baris, serta nama-nama kolom dari dataframe turnover?)", type = "single",
+correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
+random_answer_order = TRUE,
+answer(".describe()"),
+answer(".head()"),
+answer("info()", correct = TRUE),
+answer(".shape"))
+```
+
+```{r lat14, echo=FALSE}
+question("Berapakah rata-rata satisfaction_level yang diberikan oleh seluruh karyawan pada data turnover?)", type = "single",
+correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
+random_answer_order = TRUE,
+answer("0.56"),
+answer("1.0"),
+answer("0.55", correct = TRUE),
+answer("0.78"))
+```
+
+```{r lat15, echo=FALSE}
+question("Jika kita ingin mengetahui nilai quartile ke-3 dari kolom yang memiliki tipe data numeric, manakah code dibawah ini yang tepat?)", type = "multiple",
+correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
+random_answer_order = TRUE,
+answer("turnover.quantile(0.25)"),
+answer("turnover.quantile(0.75)", correct = TRUE),
+answer("turnover.quantile(0.75, numeric_only=True)", correct = TRUE))
+```
+
+### Indexing and Subsetting
+
+Jika berbicara mengenai analisis data, terkadang kita juga melakukan slicing atau subsetting pada data-data dengan kondisi tertentu. Secara umum apabila kita ingin melakukan subsetting dan indexing pada dataframe pada python yang disupport oleh `pandas`, kita bisa menggunakan beberapa cara berikut:
+
+- `df[start:end]` : untuk melakukan subset berdasarkan index baris tertentu secara terurut
+- `.loc[]` : untuk melakukan subset pada nama baris atau nama kolom tertentu
+- `.iloc[]` : untuk melakukan subset menggunakan index baris atau kolom tertentu
+- `df['column_name']` : untuk melakukan subset berdasarkan nama kolom tertentu
+- `select_dtypes()` : untuk melakukan subset berdasarkan tipe data tertentu
+- `.drop()` : untuk menghilangkan nilai tertentu
+
+Beberapa cara diatas dapat digunakan sesuai dengan kondisi-kondisi tertentu. Beberapa sudah banyak dijelaskan pada course material **Python for Data Analyst**. 
+
+Sebagai contoh misalnya kita hanya tertarik pada tipe data object pada data `turnover` untuk kita buat summary nya. Kita bisa menggunakan `select_dtypes()` untuk memilih tipe data yang kita inginkan.
+
+```{python}
+turnover.select_dtypes('object').describe()
+```
+
+Misalnya kita ingin melakukan subset data ke-8 hingga ke-15 pada kolom 'average_montly_hours' dan 'time_spend_company' dimana jika dalam index pada data karena python memiliki index yang berawal dari angka 0 maka kita ingin mengambil data index ke-7 hingga ke-14. 
+
+Urutan nilai pada python akan diawali dengan index ke 0 hingga index-1, jadi apabila kita menuliskan urutan index ke-7 hingga ke-14, maka yang akan muncul adalah data dari index ke-7 hingga ke-13.
+
+Oleh karena itu apabila kita ingin melakukan subset untuk data ke-8 hingga ke-15 maka kita tulis indexnya dari 7 hingga 11.
+
+```{python}
+turnover[7:11]
+```
+
+```{python}
+turnover[7:11].loc[:,['average_montly_hours','time_spend_company']]
+```
+
+Penggunaan code diatas akan sama dengan code dibawah ini jika kita menerapkan penggunaan `loc[]` dan `iloc[]`.
+
+```{python}
+turnover.iloc[7:11,:].loc[:,['average_montly_hours','time_spend_company']]
+```
+
+Kebalikan dari `loc[]` dan `iloc[]`, `drop()` dapat kita gunakan untuk menghapus nilai tertentu pada data. 
+
+Misalnya kita ingin menghapus kolom 'average_montly_hours' dan 'time_spend_company' pada data `turnover`.
+
+```{python}
+list(turnover.drop([ 'average_montly_hours','time_spend_company'], axis=1))
+```
+
+Tujuan penggunaan parameter `axis = 1` adalah agar dalam memberikan perintah `drop()` langsung tertuju pada kolom. 
+Jadi apabila kita ingin menghapus baris tertentu kita bisa gunakan `axis = 0`, dimana secara default method `drop()` menggunakan `axis = 0`.
+
+```{python}
+list(turnover)
+```
+
+
+```{python}
+list(turnover.drop([7,8,9,10,11,12,13,14,15]))
+```
+
+### Kondisional Subset
+
+Selain melakukan subsetting berdasarkan nama baris dan kolomnya, kita juga bisa melakukan subsetting berdasarkan kondisi tertentu. Untuk melakukan subsetting dengan kondisi tertentu ada beberapa **logical operator** yang bisa kita gunakan yaitu sebagai berikut.
+
+- `==` sama dengan
+- `!=` tidak sama dengan
+- `>` lebih besar
+- `<` lebih kecil
+- `>=` lebih besar sama dengan
+- `<=` lebih kecil sama dengan
+- `&` AND
+- `|` OR
+
+Misalkan disini kita ingin mencari tahu berapa banyak karyawan yang berada pada divisi sales.
+
+```{python}
+turnover[turnover['division'] == 'sales']
+```
+
+Jika kondisinya lebih dari satu, maka kita harus memisahkan setiap kondisi dengan tanda kurung `()`. Misal kita ingin tahu yang termasuk divisi sales dan time_spend_company nya lebih dari 3 tahun.
+
+```{python}
+turnover[['division', 'salary']] = turnover[['division', 'salary']].astype('category')
+turnover['division'].cat.categories
+```
+
+### Quiz 4
+
+Berdasarkan data `turnover` coba lakukan subsetting dan jawablah pertanyaan dibawah ini.
+
+1. Berapa banyak karyawan  yang memberikan penilaian satisfaction_level lebih dari 0.8?
+2. Katakanlah kita sedang di posisi HR yang ingin melakukan analisis terhadap karyawan yang memberikan satisfaction_level kurang dari 0.5, tingkat salary yang rendah dan memiliki status left 0. Berapa banyak karyawan yang harus diperhatikan oleh HR?
+3. Sebagai seorang HR, kita ingin coba menerapkan beberapa treatment khusus bagi karyawan yang berada pada divisi HR  yang tidak mendapatkan promosi selama 5 tahun belakang (`promotion_last_5years`) dan memiliki tingka salary yang rendah. Berapa banyak karyawan yang perlu perhatian lebih oleh HR?
+
+```{python lat16, exercise = TRUE, exercise.eval = TRUE}
+# Soal 1
+```
+
+```{python lat17, exercise = TRUE, exercise.eval = TRUE}
+# Soal 2
+```
+
+```{python lat18, exercise = TRUE, exercise.eval = TRUE}
+# Soal 3
+```
+
+## Task
+
+Selamat!! Anda sudah selesai mempelajari beberapa pemahaman dasar dalam melakukan analisis data menggunakan `pandas`. Sebagai bentuk Anda dalam mempelajari pemahaman dasar menggunakan `pandas`, kita akan coba berikan beberapa soal untuk menguji pemahaman Anda mengenai beberapa materi diatas. 
+
+Pada folder data_input terdapat file .csv dengan nama handphone.csv. Lakukan import data `handphone.csv` menggunakan `pd.read_csv()` dengan menambahkan parameter `encoding='unicode_escape'`. Setelah berhasil terbaca datanya, kerjakanlah beberapa soal dibawah ini. 
+
+Data `handphone.csv` merupakan data penjualan handphone dari beberapa seller yang dipromosikan di suatu e-commerce di Indonesia. Berikut ini beberapa penjelasan untuk masing-masing kolomnya.
+- `product_title` : nama produk yang di promosikan di laman e-commerce
+- `location` : lokasi seller
+- `account_seller` : nama akun seller
+- `price` : harga produk
+- `review` : total review yang diberikan untuk produk yang dijual seller
+- `installment` : besarnya cicilan yang harus dibayarkan (jika menggunakan metode cicilan untuk membayar)
+- `rating` : rating untuk produk yang dijual oleh seller
+- `brand_hp` : brand handphone yang dijual
+
+```{python}
+hp = pd.read_csv("data_input/handphone.csv", encoding='unicode_escape')
+hp.head()
+```
+
+```{python}
+hp.dtypes
+```
+
+1. Adakah tipe data yang belum sesuai dari kolom pada data tersebut? Jika ada, ubahlah kedalam tipe data yang sesuai.
+
+```{python lat19, exercise = TRUE, exercise.eval = TRUE}
+# Soal 1
+
+```
+
+```{r lat20, echo=FALSE}
+question("Dimanakah lokasi seller terbanyak yang menjual handphone?", type = "single",
+correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
+random_answer_order = TRUE,
+answer("Tangerang"),
+answer("Yogyakarta"),
+answer("Jakarta", correct = TRUE),
+answer("Bekasi"))
+```
+
+```{r lat21, echo=FALSE}
+question("Berapa banyak seller yang mempromosikan handphone di e-commerce tersebut yang berlokasi di Jakarta?", type = "single",
+correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
+random_answer_order = TRUE,
+answer("4920"),
+answer("116"),
+answer("2723", correct = TRUE),
+answer("156"))
+```
+
+```{r lat22, echo=FALSE}
+question("Berapakah rata-rata rating yang diberikan oleh pembeli untuk seller OPPO OFFICIAL STORE?", type = "single",
+correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
+random_answer_order = TRUE,
+answer("4.59"),
+answer("4.71"),
+answer("4.88", correct = TRUE),
+answer("4.63"))
+```
+
+```{r lat23, echo=FALSE}
+question("Berapakah rata-rata harga handphone dengan brand oppo yang dijual oleh OPPO OFFICIAL STORE?", type = "single",
+correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
+random_answer_order = TRUE,
+answer("Rp 1.799.000"),
+answer("Rp 4.049.450"),
+answer("Rp 3.141.307", correct = TRUE),
+answer("Rp 1.913.800"))
+```
+
+```{r lat24, echo=FALSE}
+question("Berapakah produk yang memiliki rating kurang dari 4? ", type = "single",
+correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
+random_answer_order = TRUE,
+answer("18"),
+answer("218"),
+answer("14", correct = TRUE),
+answer("15"))
+```
+
+```{r lat25, echo=FALSE}
+question("Brand handphone apakah yang paling banyak dipromosikan melalui e-commerce tersebut? ", type = "single",
+correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
+random_answer_order = TRUE,
+answer("oppo"),
+answer("apple"),
+answer("xiaomi", correct = TRUE),
+answer("asus"))
+```
+
+```{r lat26, echo=FALSE}
+question("Seller manakah yang memberikan installment paling rendah dari produk yang dipasarkan? Silahkan pilih lebih dari 1 jawaban dibawah ini.", type = "multiple",
+correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
+random_answer_order = TRUE,
+answer("Kelontong Unik"),
+answer("enterphone2", correct = TRUE),
+answer("Shopuz ID", correct = TRUE),
+answer("ERAFONE"))
+```
+
+
+
+
