@@ -226,13 +226,14 @@ print(dict_object)
 ### Quiz 1
 
 ```{r lat1, echo=FALSE}
-question("Berdasarkan pilihan dibawah ini, manakah struktur data yang bisa kita tentukan index dan nilainya?", type = "single",
+learnr::question("Berdasarkan pilihan dibawah ini, manakah struktur data yang bisa kita tentukan index dan nilainya?", type = "single",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = FALSE,
 answer("list", correct = TRUE),
 answer("tuple"),
 answer("dictionary"))
 ```
+
 
 ```{r lat2, echo=FALSE}
 question("Jika ada struktur data dibawah ini. <br><br><i>object1 = [1,45,23,12,45,2,3,4,67,23]</i><br><br> Termasuk apakah object1?", type = "single",
@@ -283,7 +284,8 @@ print(pd.__version__)
 
 Kita akan coba untuk melakukan exploratory data menggunakan data turnover suatu perusahaan. Untuk melihat datanya kita harus mengimport data turnover tersebut yang tersimpan dengan nama file `turnover_balance.csv`. Data ini menunjukkan suatu record history karyawan pada perusahaan tertentu yang mengalami turnover berdasarkan beberapa atribut-atribut penunjangnya yaitu `satisfaction_level`, `last_evaluation`, `number_project`, `average_monthly_hours`, `time_spend_company`, `Work_accident`, `promotion_last_5years`, `division`, dan `salary`. Berikut data turnover tersebut :
 
-```{python data, echo=FALSE, message=FALSE, warning=FALSE}
+```{python}
+import pandas as pd
 turnover = pd.read_csv("data_input/turnover_balance.csv")
 list(turnover.columns)
 ```
@@ -329,7 +331,7 @@ Pada course material, telah dibahas bagaimana mengubah tipe data pada suatu data
 
 Sebelum kita akan mengalisis kolom manakah yang belum sesuai, kita cek terlebih dahulu tipe data dari masing-masing kolom pada object `turnover` yang kita miliki.
 
-```{python lat5, exercise = TRUE, exercise.setup = "data"}
+```{python lat5, exercise = TRUE, exercise.setup = "setup"}
 
 ```
 
