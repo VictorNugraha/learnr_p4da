@@ -5,6 +5,8 @@ date :  "`r format(Sys.time(), '%B %d, %Y')`"
 output: 
   learnr::tutorial:
   fig.show : 'asis'
+  rogressive: true
+  allow_skip: true
 runtime: shiny_prerendered
 ---
 
@@ -35,7 +37,8 @@ library(scales)
 
 # Python
 library(reticulate)
-library(googlesheets4)
+# path_to_python <- "C:/Users/Victor/anaconda3/envs/r-tensorflow"    
+# use_python(path_to_python, required = TRUE)
 ```
 
 ## Pengetahuan Dasar Python
@@ -229,46 +232,46 @@ print(dict_object)
 learnr::question("Berdasarkan pilihan dibawah ini, manakah struktur data yang bisa kita tentukan index dan nilainya?", type = "single",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = FALSE,
-answer("list", correct = TRUE),
-answer("tuple"),
-answer("dictionary"))
+learnr::answer("list", correct = TRUE),
+learnr::answer("tuple"),
+learnr::answer("dictionary"))
 ```
 
 
 ```{r lat2, echo=FALSE}
-question("Jika ada struktur data dibawah ini. <br><br><i>object1 = [1,45,23,12,45,2,3,4,67,23]</i><br><br> Termasuk apakah object1?", type = "single",
+learnr::question("Jika ada struktur data dibawah ini. <br><br><i>object1 = [1,45,23,12,45,2,3,4,67,23]</i><br><br> Termasuk apakah object1?", type = "single",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = FALSE,
-answer("list", correct = TRUE),
-answer("tuple"),
-answer("dictionary"))
+learnr::answer("list", correct = TRUE),
+learnr::answer("tuple"),
+learnr::answer("dictionary"))
 ```
 
 ```{r lat3, echo=FALSE}
-question("Manakah dari pilihan dibawah ini yang tidak menghasilkan error?", type = "single",
+learnr::question("Manakah dari pilihan dibawah ini yang tidak menghasilkan error?", type = "single",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = FALSE,
-answer("object1 = (1,2,3,4,5,6)<br>
+learnr::answer("object1 = (1,2,3,4,5,6)<br>
       object1[3] = 9<br>
       print(object1)"),
-answer("object1 = {'angka':1, 'bulan':03, 'tahun': 2020, 'lokasi': 'jakarta'}<br>
+learnr::answer("object1 = {'angka':1, 'bulan':03, 'tahun': 2020, 'lokasi': 'jakarta'}<br>
       object1 = {'angka':1, 'angka':4, 'angka':10, 'bulan':03, 'tahun': 2020, 'tahun1': 2019, 'tahun': 2021, 'lokasi': 'jakarta'}"),
-answer("object1 = [1,2,3,4,5,6]<br>
+learnr::answer("object1 = [1,2,3,4,5,6]<br>
       object1.index(3)", correct = TRUE),
-answer("object1 = [1,2,3,4,5,6]
+learnr::answer("object1 = [1,2,3,4,5,6]
       object1.index(0)"))
 ```
 
 ```{r lat4, echo=FALSE}
-question("Berapakah nilai yang dihasilkan dari code dibawah ini?<br><br>
+learnr::question("Berapakah nilai yang dihasilkan dari code dibawah ini?<br><br>
          angka = {1:10, 2:20, 3:30, 4:40, 5:50, 6:60, 6:90, 7:70, 8:80, 8:88, 9:90}<br>
 print(angka[1], angka[6], angka[8])", type = "single",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = FALSE,
-answer("10, 50, 88"),
-answer("10, 60, 88"),
-answer("10, 90, 88", correct = TRUE),
-answer("10, 90, 80"))
+learnr::answer("10, 50, 88"),
+learnr::answer("10, 60, 88"),
+learnr::answer("10, 90, 88", correct = TRUE),
+learnr::answer("10, 90, 80"))
 ```
 
 ## Module Pandas
@@ -284,9 +287,14 @@ print(pd.__version__)
 
 Kita akan coba untuk melakukan exploratory data menggunakan data turnover suatu perusahaan. Untuk melihat datanya kita harus mengimport data turnover tersebut yang tersimpan dengan nama file `turnover_balance.csv`. Data ini menunjukkan suatu record history karyawan pada perusahaan tertentu yang mengalami turnover berdasarkan beberapa atribut-atribut penunjangnya yaitu `satisfaction_level`, `last_evaluation`, `number_project`, `average_monthly_hours`, `time_spend_company`, `Work_accident`, `promotion_last_5years`, `division`, dan `salary`. Berikut data turnover tersebut :
 
-```{python}
+```{python, include = FALSE, echo=FALSE}
 import pandas as pd
 turnover = pd.read_csv("data_input/turnover_balance.csv")
+```
+
+```{python data1, echo=FALSE}
+import pandas as pd
+turnover = pd.read_csv("turnover_balance.csv")
 list(turnover.columns)
 ```
 
@@ -331,7 +339,7 @@ Pada course material, telah dibahas bagaimana mengubah tipe data pada suatu data
 
 Sebelum kita akan mengalisis kolom manakah yang belum sesuai, kita cek terlebih dahulu tipe data dari masing-masing kolom pada object `turnover` yang kita miliki.
 
-```{python lat5, exercise = TRUE, exercise.setup = "setup"}
+```{python lat5, exercise = TRUE, connection = "turnover", output.var="my_result"}
 
 ```
 
@@ -341,13 +349,13 @@ Jika kita perhatikan berdasarkan gloosary dari masing-masing kolom pada data `tu
 
 Jika sudah menemukannya, Anda dapat mengubahnya menggunakan fungsi `astype('category')` dan jangan lupa simpan kembali agar data `turnover` sudah memiliki tipe data yang tepat untuk masing-masing kolomnya.
 
-```{python lat6, exercise = TRUE, exercise.eval = TRUE}
+```{python lat6, exercise = TRUE, exercise.eval = TRUE, connection = "turnover"}
 
 ```
 
 Lakukan pengecekan ulang mengenai tipe data yang sudah diubah, apakah sudah terubah dengan baik dengan menggunakan `dtypes` atribut.
 
-```{python lat7, exercise = TRUE, exercise.eval = TRUE}
+```{python lat7, exercise = TRUE, exercise.eval = TRUE, connection = "turnover"}
 
 ```
 
@@ -368,33 +376,33 @@ toko
 ```
 
 ```{r lat8, echo=FALSE}
-question("Jika Fafilia adalah seorang data analyst pada toko tersebuut, dia diminta untuk melakukan analisis terhadap data toko tersebut. Manakah dari kolom yang tersedia termasuk category atau object?)", type = "single",
+learnr::question("Jika Fafilia adalah seorang data analyst pada toko tersebuut, dia diminta untuk melakukan analisis terhadap data toko tersebut. Manakah dari kolom yang tersedia termasuk category atau object?)", type = "single",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = TRUE,
-answer("jenis dan harga"),
-answer("warna dan stok"),
-answer("jenis dan warna", correct = TRUE),
-answer("warna dan diskon"))
+learnr::answer("jenis dan harga"),
+learnr::answer("warna dan stok"),
+learnr::answer("jenis dan warna", correct = TRUE),
+learnr::answer("warna dan diskon"))
 ```
 
 ```{r lat9, echo=FALSE}
-question("Manakah kolom yang termasuk integer?)", type = "single",
+learnr::question("Manakah kolom yang termasuk integer?)", type = "single",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = TRUE,
-answer("diskon"),
-answer("stok"),
-answer("jenis", correct = TRUE),
-answer("warna"))
+learnr::answer("diskon"),
+learnr::answer("stok"),
+learnr::answer("jenis", correct = TRUE),
+learnr::answer("warna"))
 ```
 
 ```{r lat10, echo=FALSE}
-question("Manakah yang termasuk tipe data float pada data toko diatas?)", type = "single",
+learnr::question("Manakah yang termasuk tipe data float pada data toko diatas?)", type = "single",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = TRUE,
-answer("diskon"),
-answer("stok"),
-answer("jenis", correct = TRUE),
-answer("penjualan_mingguan"))
+learnr::answer("diskon"),
+learnr::answer("stok"),
+learnr::answer("jenis", correct = TRUE),
+learnr::answer("penjualan_mingguan"))
 ```
 
 ### Eksplorasi Data
@@ -410,7 +418,7 @@ Selain mengetahui tipe data, terkadang kita juga perlu melakukan eksplorasi lebi
 
 Untuk melakukan inspek kolom yang kita perlukan, kita bisa menggunakan `df['namakolom']` jika hanya satu kolom atau dengan menggunakan `df[['kolom1','kolom2',...]]`. Misalkan kita ingin menampilkan 5 data pertama dari kolom `division`, `salary`, dan `left`.
 
-```{python}
+```{python ex2, exercise = TRUE, exercise.setup = "data1"}
 turnover[['division', 'salary', 'left']].head()
 ```
 
@@ -495,7 +503,7 @@ turnover.dtypes
 
 Pada part sebelumnya kita sudah mencoba untuk mengubah kolom `division` dan `salary` tipe data object menjadi `category` dengan menggunakan method `astype()`. Jika kita perhatikan sekali lagi pada data `turnover`, masih terdapat beberapa kolom yang belum tepat tipe datanya berdasarkan informasi pada kolom tersebut. Oleh karena itu, coba ubah beberapa kolom yang seharusnya `category` dari kolom yang ada.
 
-```{python lat11, exercise = TRUE, exercise.eval = TRUE}
+```{python lat11, exercise = TRUE, exercise.eval = TRUE, connection = "turnover"}
 
 ```
 
@@ -504,42 +512,42 @@ Pada part sebelumnya kita sudah mencoba untuk mengubah kolom `division` dan `sal
 Berdasarkan data `turnover` yang kita miliki, jawablah beberapa pertanyaan berikut ini.
 
 ```{r lat12, echo=FALSE}
-question("Method apakah yang bisa kita gunakan untuk mendapatkan informasi tipe data, banyaknya kolom dan baris, serta nama-nama kolom dari dataframe turnover?)", type = "single",
+learnr::question("Method apakah yang bisa kita gunakan untuk mendapatkan informasi tipe data, banyaknya kolom dan baris, serta nama-nama kolom dari dataframe turnover?)", type = "single",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = TRUE,
-answer(".describe()"),
-answer(".head()"),
-answer("info()", correct = TRUE),
-answer(".shape"))
+learnr::answer(".describe()"),
+learnr::answer(".head()"),
+learnr::answer("info()", correct = TRUE),
+learnr::answer(".shape"))
 ```
 
 ```{r lat13, echo=FALSE}
-question("Method apakah yang bisa kita gunakan untuk mendapatkan informasi tipe data, banyaknya kolom dan baris, serta nama-nama kolom dari dataframe turnover?)", type = "single",
+learnr::question("Method apakah yang bisa kita gunakan untuk mendapatkan informasi tipe data, banyaknya kolom dan baris, serta nama-nama kolom dari dataframe turnover?)", type = "single",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = TRUE,
-answer(".describe()"),
-answer(".head()"),
-answer("info()", correct = TRUE),
-answer(".shape"))
+learnr::answer(".describe()"),
+learnr::answer(".head()"),
+learnr::answer("info()", correct = TRUE),
+learnr::answer(".shape"))
 ```
 
 ```{r lat14, echo=FALSE}
-question("Berapakah rata-rata satisfaction_level yang diberikan oleh seluruh karyawan pada data turnover?)", type = "single",
+learnr::question("Berapakah rata-rata satisfaction_level yang diberikan oleh seluruh karyawan pada data turnover?)", type = "single",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = TRUE,
-answer("0.56"),
-answer("1.0"),
-answer("0.55", correct = TRUE),
-answer("0.78"))
+learnr::answer("0.56"),
+learnr::answer("1.0"),
+learnr::answer("0.55", correct = TRUE),
+learnr::answer("0.78"))
 ```
 
 ```{r lat15, echo=FALSE}
-question("Jika kita ingin mengetahui nilai quartile ke-3 dari kolom yang memiliki tipe data numeric, manakah code dibawah ini yang tepat?)", type = "multiple",
+learnr::question("Jika kita ingin mengetahui nilai quartile ke-3 dari kolom yang memiliki tipe data numeric, manakah code dibawah ini yang tepat?)", type = "multiple",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = TRUE,
-answer("turnover.quantile(0.25)"),
-answer("turnover.quantile(0.75)", correct = TRUE),
-answer("turnover.quantile(0.75, numeric_only=True)", correct = TRUE))
+learnr::answer("turnover.quantile(0.25)"),
+learnr::answer("turnover.quantile(0.75)", correct = TRUE),
+learnr::answer("turnover.quantile(0.75, numeric_only=True)", correct = TRUE))
 ```
 
 ### Indexing and Subsetting
@@ -635,15 +643,15 @@ Berdasarkan data `turnover` coba lakukan subsetting dan jawablah pertanyaan diba
 2. Katakanlah kita sedang di posisi HR yang ingin melakukan analisis terhadap karyawan yang memberikan satisfaction_level kurang dari 0.5, tingkat salary yang rendah dan memiliki status left 0. Berapa banyak karyawan yang harus diperhatikan oleh HR?
 3. Sebagai seorang HR, kita ingin coba menerapkan beberapa treatment khusus bagi karyawan yang berada pada divisi HR  yang tidak mendapatkan promosi selama 5 tahun belakang (`promotion_last_5years`) dan memiliki tingka salary yang rendah. Berapa banyak karyawan yang perlu perhatian lebih oleh HR?
 
-```{python lat16, exercise = TRUE, exercise.eval = TRUE}
+```{python lat16, exercise = TRUE, exercise.eval = TRUE, connection = "turnover"}
 # Soal 1
 ```
 
-```{python lat17, exercise = TRUE, exercise.eval = TRUE}
+```{python lat17, exercise = TRUE, exercise.eval = TRUE, connection = "turnover"}
 # Soal 2
 ```
 
-```{python lat18, exercise = TRUE, exercise.eval = TRUE}
+```{python lat18, exercise = TRUE, exercise.eval = TRUE, connection = "turnover"}
 # Soal 3
 ```
 
@@ -663,8 +671,8 @@ Data `handphone.csv` merupakan data penjualan handphone dari beberapa seller yan
 - `rating` : rating untuk produk yang dijual oleh seller
 - `brand_hp` : brand handphone yang dijual
 
-```{python}
-hp = pd.read_csv("data_input/handphone.csv", encoding='unicode_escape')
+```{python data2, echo = FALSE}
+hp = pd.read_csv("handphone.csv", encoding='unicode_escape')
 hp.head()
 ```
 
@@ -674,79 +682,79 @@ hp.dtypes
 
 1. Adakah tipe data yang belum sesuai dari kolom pada data tersebut? Jika ada, ubahlah kedalam tipe data yang sesuai.
 
-```{python lat19, exercise = TRUE, exercise.eval = TRUE}
+```{python lat19, exercise = TRUE, exercise.eval = TRUE, connection = "hp"}
 # Soal 1
 
 ```
 
 ```{r lat20, echo=FALSE}
-question("Dimanakah lokasi seller terbanyak yang menjual handphone?", type = "single",
+learnr::question("Dimanakah lokasi seller terbanyak yang menjual handphone?", type = "single",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = TRUE,
-answer("Tangerang"),
-answer("Yogyakarta"),
-answer("Jakarta", correct = TRUE),
-answer("Bekasi"))
+learnr::answer("Tangerang"),
+learnr::answer("Yogyakarta"),
+learnr::answer("Jakarta", correct = TRUE),
+learnr::answer("Bekasi"))
 ```
 
 ```{r lat21, echo=FALSE}
-question("Berapa banyak seller yang mempromosikan handphone di e-commerce tersebut yang berlokasi di Jakarta?", type = "single",
+learnr::question("Berapa banyak seller yang mempromosikan handphone di e-commerce tersebut yang berlokasi di Jakarta?", type = "single",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = TRUE,
-answer("4920"),
-answer("116"),
-answer("2723", correct = TRUE),
-answer("156"))
+learnr::answer("4920"),
+learnr::answer("116"),
+learnr::answer("2723", correct = TRUE),
+learnr::answer("156"))
 ```
 
 ```{r lat22, echo=FALSE}
-question("Berapakah rata-rata rating yang diberikan oleh pembeli untuk seller OPPO OFFICIAL STORE?", type = "single",
+learnr::question("Berapakah rata-rata rating yang diberikan oleh pembeli untuk seller OPPO OFFICIAL STORE?", type = "single",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = TRUE,
-answer("4.59"),
-answer("4.71"),
-answer("4.88", correct = TRUE),
-answer("4.63"))
+learnr::answer("4.59"),
+learnr::answer("4.71"),
+learnr::answer("4.88", correct = TRUE),
+learnr::answer("4.63"))
 ```
 
 ```{r lat23, echo=FALSE}
-question("Berapakah rata-rata harga handphone dengan brand oppo yang dijual oleh OPPO OFFICIAL STORE?", type = "single",
+learnr::question("Berapakah rata-rata harga handphone dengan brand oppo yang dijual oleh OPPO OFFICIAL STORE?", type = "single",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = TRUE,
-answer("Rp 1.799.000"),
-answer("Rp 4.049.450"),
-answer("Rp 3.141.307", correct = TRUE),
-answer("Rp 1.913.800"))
+learnr::answer("Rp 1.799.000"),
+learnr::answer("Rp 4.049.450"),
+learnr::answer("Rp 3.141.307", correct = TRUE),
+learnr::answer("Rp 1.913.800"))
 ```
 
 ```{r lat24, echo=FALSE}
-question("Berapakah produk yang memiliki rating kurang dari 4? ", type = "single",
+learnr::question("Berapakah produk yang memiliki rating kurang dari 4? ", type = "single",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = TRUE,
-answer("18"),
-answer("218"),
-answer("14", correct = TRUE),
-answer("15"))
+learnr::answer("18"),
+learnr::answer("218"),
+learnr::answer("14", correct = TRUE),
+learnr::answer("15"))
 ```
 
 ```{r lat25, echo=FALSE}
-question("Brand handphone apakah yang paling banyak dipromosikan melalui e-commerce tersebut? ", type = "single",
+learnr::question("Brand handphone apakah yang paling banyak dipromosikan melalui e-commerce tersebut? ", type = "single",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = TRUE,
-answer("oppo"),
-answer("apple"),
-answer("xiaomi", correct = TRUE),
-answer("asus"))
+learnr::answer("oppo"),
+learnr::answer("apple"),
+learnr::answer("xiaomi", correct = TRUE),
+learnr::answer("asus"))
 ```
 
 ```{r lat26, echo=FALSE}
-question("Seller manakah yang memberikan installment paling rendah dari produk yang dipasarkan? Silahkan pilih lebih dari 1 jawaban dibawah ini.", type = "multiple",
+learnr::question("Seller manakah yang memberikan installment paling rendah dari produk yang dipasarkan? Silahkan pilih lebih dari 1 jawaban dibawah ini.", type = "multiple",
 correct = "Selamat jawabannya sudah benar!", incorrect = "Ups, Salah!", allow_retry = TRUE,
 random_answer_order = TRUE,
-answer("Kelontong Unik"),
-answer("enterphone2", correct = TRUE),
-answer("Shopuz ID", correct = TRUE),
-answer("ERAFONE"))
+learnr::answer("Kelontong Unik"),
+learnr::answer("enterphone2", correct = TRUE),
+learnr::answer("Shopuz ID", correct = TRUE),
+learnr::answer("ERAFONE"))
 ```
 
 
